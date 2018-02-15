@@ -1,48 +1,37 @@
 # **NGINX** docker container as a **Reverse-Proxy**
 
-## 1.  Reproduce it
-
-### 1.1 Clone this repo:
+## 1. Clone this repo:
 
 `$ git clone https://github.com/cbelda/nginx4reverse-proxy.git`
 
-### 1.2 Build the image:
+## 2. Edit the nginx configuration file to fit your needs
+That means, edit `nginx.conf` to redirect one local URL (local for the container) to a different one. It could also be a different local one.
 
-```
-$ cd nginx4angular
-$ docker build -t nginx4angular .
-```
+For example:
+- nginx container running in `http://localhost:80`
+- Container's URL (local) : `http://localhost:80/api`
+- Proxied URL : `http://www.github.com`
 
-### 1.3 Run the Docker container:
-
-```
-$ docker run -it -d -p 80:80 --name=mynginx4angular nginx4angular
-```
-
-### 1.4 Make the nginx container serve your app by copying the `dist/` content in the `html/` nginx directory:
-
-```
-$ docker cp my/ng/project/dist/. mynginx4angular:/usr/share/nginx/html/
-```
-
-## 2. Use it directly
-
-This image is already published in the [Docker Hub](https://hub.docker.com/r/cbelda/nginx4angular/).
-
-### 2.1 Pull the image from the hub:
-
-```
-$ docker pull cbelda/nginx4angular
+nginx.conf:
+```nginx
+server {
+    ...
+    location /api {
+        proxy_pass http://www.github.com;
+    }
+    ...
+}
 ```
 
-### 2.2 Run the Docker container:
+## 3. Build the image:
 
 ```
-$ docker run -it -d -p 80:80 --name=mynginx4angular cbelda/nginx4angular
+$ cd nginx4reverse-proxy
+$ docker build -t nginx4reverse-proxy .
 ```
 
-### 2.3 Make the nginx container serve your app by copying the `dist/` content in the `html/` nginx directory:
+## 4. Run the Docker container:
 
 ```
-$ docker cp my/ng/project/dist/. mynginx4angular:/usr/share/nginx/html/
+$ docker run -it -d -p 80:80 --name=nginx4reverse-proxy nginx4reverse-proxy
 ```
